@@ -27,6 +27,32 @@ public class typematrix {
 
      */
 
+    //just generally helpful methods that make my life easier / put me at ease because I care about big o
+    public static double factorial(double base){
+        for(int i = (int)base-1; i > 0; i--){
+            //System.out.println(base + " - " + i);
+            base = base * (double)i;
+        }
+        return base;
+    }
+
+    public static PokemonType binarySearch(PokemonType[] types, int target){
+        int low = 0;
+        int high = types.length - 1;
+
+        while (low <= high){
+            int mid = low + (int)Math.floor((double)(high - low)/2);
+            if (types[mid].getId() < target){
+                low = mid + 1;
+            } else if (types[mid].getId() > target){
+                high = mid - 1;
+            } else if (types[mid].getId() ==  target){
+                return types[mid];
+            }
+        }
+        return null;
+    }
+
     //lists out all possible type combinations without repeats
     public static void matrix(String[] types) {
         int k = 0;
@@ -275,6 +301,145 @@ public class typematrix {
         return matrix;
     }
 
+    //dual types
+    public static PokemonDType[] dualTypes(PokemonType[] types) {
+        //amount of combinations of dual types using (n + k - 1)! / (k!(n-1)!)
+        double m = ((factorial(types.length + 2 - 1)) / (factorial(2) * (factorial(types.length - 1))));
+        int n = (int) m;
+        PokemonDType[] dTypes = new PokemonDType[n];
+        System.out.println("there are " + n + " different dual type combinations");
+        int k = 0;
+        for (int i = 0; i < types.length; i++) {
+            for (int j = i; j < types.length; j++) {
+                if (i == j) {
+                    //Pure Typings
+                    //System.out.println("Attempting to create pure " + types[i].getName());
+                    dTypes[k] = new PokemonDType(types[i]);
+                } else {
+                    //Dual Typings
+                    //System.out.println("Attempting to create " + types[i].getName() + "/" + types[j].getName());
+                    dTypes[k] = new PokemonDType(types[i], types[j]);
+
+                    //number of immunities
+                    if ((types[i].getImmune() != null) || (types[j].getImmune() != null)) {
+                        int im = 0;
+                        if (types[i].getImmune() != null) im = im + types[i].getImmune().length;
+                        if (types[j].getImmune() != null) im = im + types[j].getImmune().length;
+
+                        PokemonType[] tempIm = new PokemonType[im];
+
+                        //adding immunities
+                        int x = 0;
+                        if (types[i].getImmune() != null) {
+                            for (int l = 0; l < types[i].getImmune().length; l++) {
+                                    tempIm[x] = types[i].getImmune()[l];
+                                    x++;
+                            }
+                        }
+                        if (types[j].getImmune() != null) {
+                            for (int l = 0; l < types[j].getImmune().length; l++) {
+                                tempIm[x] = types[j].getImmune()[l];
+                                x++;
+                            }
+                        }
+                        dTypes[k].setImmune(tempIm);
+                    }
+/*
+                    //number of quad weaknesses
+                    im = 0;
+                    for (int l = 0; l < types.length; l++){
+                        if ((binarySearch(types[i].getWeak(), types[l].getId())) == (binarySearch(types[j].getWeak(), types[l].getId())) ){
+                            im++;
+                        }
+                    }
+
+                    tempIm = new PokemonType[im];
+                    im = 0;
+
+                    //adding quad weaknesses
+                    for (int l = 0; l < types.length; l++){
+                        if ((binarySearch(types[i].getWeak(), types[l].getId())) == (binarySearch(types[j].getWeak(), types[l].getId())) ){
+                            tempIm[im] = types[l];
+                            im++;
+                        }
+                    }
+                    dTypes[k].setqWeak(tempIm);
+
+
+                    //number of quad resistances
+                    if ((types[i].getResist() != null) && (types[j].getResist() != null)) {
+                        im = 0;
+                        for (int l = 0; l < types.length; l++) {
+                            if ((binarySearch(types[i].getResist(), types[l].getId())) == (binarySearch(types[j].getResist(), types[l].getId()))) {
+                                im++;
+                            }
+                        }
+
+                        tempIm = new PokemonType[im];
+                        im = 0;
+
+                        //adding quad resistances
+                        for (int l = 0; l < types.length; l++) {
+                            if ((binarySearch(types[i].getResist(), types[l].getId())) == (binarySearch(types[j].getResist(), types[l].getId()))) {
+                                tempIm[im] = types[l];
+                                im++;
+                            }
+                        }
+                        dTypes[k].setqResist(tempIm);
+                    }
+
+ */
+
+                }
+                k++;
+            }
+        }
+        return dTypes;
+    }
+
+    //dual type setup
+    public static void setDualTypes(PokemonDType[] dualTypes, PokemonType[] types){
+
+    }
+
+    public static void printDualInfo(PokemonDType[] types){
+        //int w, r, m = 0;
+        for (int i = 0; i < types.length; i++){
+            System.out.println("The " + types[i].getName() + " type combination has:");
+            if (types[i].getWeak() != null){
+                System.out.println(types[i].getWeak().length + " 2x weaknesses");
+                for(int j = 0; j < types[i].getWeak().length; j++){
+                    System.out.println("- "+types[i].getWeak()[j].getName());
+                }
+            }
+            if (types[i].getqWeak() != null){
+                System.out.println(types[i].getqWeak().length + " 4x weaknesses");
+                for(int j = 0; j < types[i].getqWeak().length; j++){
+                    System.out.println("- "+types[i].getqWeak()[j].getName());
+                }
+            }
+            if (types[i].getResist() != null){
+                System.out.println(types[i].getResist().length + " 0.5x resistances");
+                for(int j = 0; j < types[i].getResist().length; j++){
+                    System.out.println("- "+types[i].getResist()[j].getName());
+                }
+            }
+            if (types[i].getqResist() != null){
+                System.out.println(types[i].getqResist().length + " 0.25x resistances");
+                for(int j = 0; j < types[i].getqResist().length; j++){
+                    System.out.println("- "+types[i].getqResist()[j].getName());
+                }
+            }
+            if (types[i].getImmune() != null){
+                System.out.println(types[i].getImmune().length + " immunities");
+                for(int j = 0; j < types[i].getImmune().length; j++){
+                    System.out.println("- "+types[i].getImmune()[j].getName());
+                }
+            }
+            System.out.println();
+        }
+    }
+
 /*
     public static void ohJson(PokemonType[] types){
         System.out.println("[");
@@ -302,7 +467,10 @@ public class typematrix {
         String[] typesString = typeString(types);
         setTypes(types);
         //matrix(typesString);
-        printInfo(types);
+        //printInfo(types);
+        PokemonDType[] dualTypes = dualTypes(types);
+        printDualInfo(dualTypes);
+
 /*
         System.out.println("The Adjacency Matrix for Weaknesses");
         printMatrix(weakMatrix(types));
