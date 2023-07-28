@@ -36,7 +36,7 @@ public class typematrix {
         return base;
     }
 
-    public static PokemonType binarySearch(PokemonType[] types, int target){
+    public static boolean binarySearch(PokemonType[] types, int target){
         int low = 0;
         int high = types.length - 1;
 
@@ -47,10 +47,10 @@ public class typematrix {
             } else if (types[mid].getId() > target){
                 high = mid - 1;
             } else if (types[mid].getId() ==  target){
-                return types[mid];
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     //lists out all possible type combinations without repeats
@@ -320,8 +320,9 @@ public class typematrix {
                     //System.out.println("Attempting to create " + types[i].getName() + "/" + types[j].getName());
                     dTypes[k] = new PokemonDType(types[i], types[j]);
 
-                    //number of immunities
+                    //immunities
                     if ((types[i].getImmune() != null) || (types[j].getImmune() != null)) {
+                        //number of immunities
                         int im = 0;
                         if (types[i].getImmune() != null) im = im + types[i].getImmune().length;
                         if (types[j].getImmune() != null) im = im + types[j].getImmune().length;
@@ -389,6 +390,29 @@ public class typematrix {
                     }
 
  */
+                    //quad weaknesses
+                    if ((types[i].getWeak() != null) || (types[j].getWeak() != null)) {
+                        int x = 0;
+
+                        //amount of quad weaknesses
+                        for (int l = 0; l < types[i].getWeak().length; l++) {
+                            if (binarySearch(types[j].getWeak(), types[i].getWeak()[l].getId())) {
+                                x++;
+                            }
+                        }
+
+                        PokemonType[] tempqWeak = new PokemonType[x];
+                        x = 0;
+
+                        //adding quad weaknesses
+                        for (int l = 0; l < types[i].getWeak().length; l++) {
+                            if (binarySearch(types[j].getWeak(), types[i].getWeak()[l].getId())) {
+                                tempqWeak[x] = types[i].getWeak()[l];
+                                x++;
+                            }
+                        }
+                        dTypes[k].setqWeak(tempqWeak);
+                    }
 
                 }
                 k++;
