@@ -120,7 +120,7 @@ public class typematrix {
 
         //flying - 2
         weak = new PokemonType[]{types[5], types[12], types[14]};
-        resist = new PokemonType[]{types[2], types[6], types[11]};
+        resist = new PokemonType[]{types[1], types[6], types[11]};
         immune = new PokemonType[]{types[4]};
         types[i].setWeak(weak);
         types[i].setResist(resist);
@@ -191,7 +191,7 @@ public class typematrix {
 
         //grass - 11
         weak = new PokemonType[]{types[2], types[3], types[6], types[9], types[14]};
-        resist = new PokemonType[]{types[8], types[9], types[11], types[14]};
+        resist = new PokemonType[]{types[8], types[11], types[12], types[14]};
         types[i].setWeak(weak);
         types[i].setResist(resist);
         i++;
@@ -407,7 +407,8 @@ public class typematrix {
                             if (types[j].getResist() != null) {
                                 //excluding types that types[i] is weak to but types[j] resists
                                 for(int l = 0; l < types[i].getWeak().length; l++){
-                                    if ((binarySearch(types[j].getResist(), types[i].getWeak()[l].getId()) == false) && (binarySearch(types[j].getWeak(), types[i].getWeak()[l].getId()) == false)){
+                                    //there's probably a better method than this horrible if statement for this lmao. I might have to make a new Effectiveness class.
+                                    if ((binarySearch(types[j].getResist(), types[i].getWeak()[l].getId()) == false) && (binarySearch(types[j].getWeak(), types[i].getWeak()[l].getId()) == false) && (binarySearch(types[j].getImmune(), types[i].getWeak()[l].getId()) == false)){
                                         x++;
                                     }
                                 }
@@ -421,7 +422,7 @@ public class typematrix {
                             if (types[i].getResist() != null) {
                                 //excluding types that types[j] is weak to but types[i] resists
                                 for(int l = 0; l < types[j].getWeak().length; l++){
-                                    if ((binarySearch(types[i].getResist(), types[j].getWeak()[l].getId()) == false) && (binarySearch(types[i].getWeak(), types[j].getWeak()[l].getId()) == false)){
+                                    if ((binarySearch(types[i].getResist(), types[j].getWeak()[l].getId()) == false) && (binarySearch(types[i].getWeak(), types[j].getWeak()[l].getId()) == false) && (binarySearch(types[i].getImmune(), types[j].getWeak()[l].getId()) == false)){
                                         x++;
                                     }
                                 }
@@ -431,49 +432,49 @@ public class typematrix {
                             }
                         }
 
-                        PokemonType[] tempWeak = new PokemonType[x];
-                        x = 0;
+                        if (x > 0) {
+                            PokemonType[] tempWeak = new PokemonType[x];
+                            x = 0;
 
-                        //types[i] against types[j]
-                        if (types[i].getWeak() != null) {
-                            if (types[j].getResist() != null) {
-                                //excluding types that types[i] is weak to but types[j] resists
-                                for(int l = 0; l < types[i].getWeak().length; l++){
-                                    if ((binarySearch(types[j].getResist(), types[i].getWeak()[l].getId()) == false) && (binarySearch(types[j].getWeak(), types[i].getWeak()[l].getId()) == false)){
+                            //adding regular weaknesses
+                            //types[i] against types[j]
+                            if (types[i].getWeak() != null) {
+                                if (types[j].getResist() != null) {
+                                    //excluding types that types[i] is weak to but types[j] resists
+                                    for (int l = 0; l < types[i].getWeak().length; l++) {
+                                        if ((binarySearch(types[j].getResist(), types[i].getWeak()[l].getId()) == false) && (binarySearch(types[j].getWeak(), types[i].getWeak()[l].getId()) == false) && (binarySearch(types[j].getImmune(), types[i].getWeak()[l].getId()) == false)) {
+                                            tempWeak[x] = types[i].getWeak()[l];
+                                            x++;
+                                        }
+                                    }
+                                } else {
+                                    for (int l = 0; l < types[i].getWeak().length; l++) {
                                         tempWeak[x] = types[i].getWeak()[l];
                                         x++;
                                     }
                                 }
                             }
-                            else{
-                                for (int l = 0; l < types[i].getWeak().length; l++){
-                                    tempWeak[x] = types[i].getWeak()[l];
-                                    x++;
-                                }
-                            }
-                        }
 
-                        //types[j] against types[i]
-                        if (types[j].getWeak() != null) {
-                            if (types[i].getResist() != null) {
-                                //excluding types that types[i] is weak to but types[j] resists
-                                for(int l = 0; l < types[j].getWeak().length; l++){
-                                    if ((binarySearch(types[i].getResist(), types[j].getWeak()[l].getId()) == false) && (binarySearch(types[i].getWeak(), types[j].getWeak()[l].getId()) == false)){
+                            //types[j] against types[i]
+                            if (types[j].getWeak() != null) {
+                                if (types[i].getResist() != null) {
+                                    //excluding types that types[i] is weak to but types[j] resists
+                                    for (int l = 0; l < types[j].getWeak().length; l++) {
+                                        if ((binarySearch(types[i].getResist(), types[j].getWeak()[l].getId()) == false) && (binarySearch(types[i].getWeak(), types[j].getWeak()[l].getId()) == false) && (binarySearch(types[i].getImmune(), types[j].getWeak()[l].getId()) == false)) {
+                                            tempWeak[x] = types[j].getWeak()[l];
+                                            x++;
+                                        }
+                                    }
+                                } else {
+                                    for (int l = 0; l < types[j].getWeak().length; l++) {
                                         tempWeak[x] = types[j].getWeak()[l];
                                         x++;
                                     }
                                 }
                             }
-                            else{
-                                for (int l = 0; l < types[j].getWeak().length; l++){
-                                    tempWeak[x] = types[j].getWeak()[l];
-                                    x++;
-                                }
-                            }
+
+                            dTypes[k].setWeak(tempWeak);
                         }
-
-                        dTypes[k].setWeak(tempWeak);
-
                     }
 
                     //regular resistances
@@ -486,7 +487,7 @@ public class typematrix {
                             if (types[j].getWeak() != null) {
                                 //excluding types that types[i] is weak to but types[j] resists
                                 for (int l = 0; l < types[i].getResist().length; l++) {
-                                    if ((binarySearch(types[j].getWeak(), types[i].getResist()[l].getId()) == false) && (binarySearch(types[j].getResist(), types[i].getResist()[l].getId()) == false)) {
+                                    if ((binarySearch(types[j].getWeak(), types[i].getResist()[l].getId()) == false) && (binarySearch(types[j].getResist(), types[i].getResist()[l].getId()) == false) && (binarySearch(types[j].getImmune(), types[i].getResist()[l].getId()) == false)) {
                                         x++;
                                     }
                                 }
@@ -499,7 +500,7 @@ public class typematrix {
                             if (types[i].getWeak() != null) {
                                 //excluding types that types[j] is weak to but types[i] resists
                                 for (int l = 0; l < types[j].getResist().length; l++) {
-                                    if ((binarySearch(types[i].getWeak(), types[j].getResist()[l].getId()) == false) && (binarySearch(types[i].getResist(), types[j].getResist()[l].getId()) == false)) {
+                                    if ((binarySearch(types[i].getWeak(), types[j].getResist()[l].getId()) == false) && (binarySearch(types[i].getResist(), types[j].getResist()[l].getId()) == false) && (binarySearch(types[i].getImmune(), types[j].getResist()[l].getId()) == false)) {
                                         x++;
                                     }
                                 }
@@ -516,7 +517,7 @@ public class typematrix {
                             if (types[j].getWeak() != null) {
                                 //excluding types that types[i] is weak to but types[j] resists
                                 for (int l = 0; l < types[i].getResist().length; l++) {
-                                    if ((binarySearch(types[j].getWeak(), types[i].getResist()[l].getId()) == false) && (binarySearch(types[j].getResist(), types[i].getResist()[l].getId()) == false)) {
+                                    if ((binarySearch(types[j].getWeak(), types[i].getResist()[l].getId()) == false) && (binarySearch(types[j].getResist(), types[i].getResist()[l].getId()) == false) && (binarySearch(types[j].getImmune(), types[i].getResist()[l].getId()) == false)) {
                                         tempResist[x] = types[i].getResist()[l];
                                         x++;
                                     }
@@ -534,7 +535,7 @@ public class typematrix {
                             if (types[i].getWeak() != null) {
                                 //excluding types that types[i] is weak to but types[j] resists
                                 for (int l = 0; l < types[j].getResist().length; l++) {
-                                    if ((binarySearch(types[i].getWeak(), types[j].getResist()[l].getId()) == false) && (binarySearch(types[i].getResist(), types[j].getResist()[l].getId()) == false)) {
+                                    if ((binarySearch(types[i].getWeak(), types[j].getResist()[l].getId()) == false) && (binarySearch(types[i].getResist(), types[j].getResist()[l].getId()) == false) && (binarySearch(types[i].getImmune(), types[j].getResist()[l].getId()) == false)) {
                                         tempResist[x] = types[j].getResist()[l];
                                         x++;
                                     }
