@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class typematrix {
 
     /*
@@ -334,8 +336,8 @@ public class typematrix {
                         int x = 0;
                         if (types[i].getImmune() != null) {
                             for (int l = 0; l < types[i].getImmune().length; l++) {
-                                    tempIm[x] = types[i].getImmune()[l];
-                                    x++;
+                                tempIm[x] = types[i].getImmune()[l];
+                                x++;
                             }
                         }
                         if (types[j].getImmune() != null) {
@@ -627,10 +629,25 @@ public class typematrix {
         PokemonType[] types = initTypes();
         String[] typesString = typeString(types);
         setTypes(types);
-        //matrix(typesString);
-        //printInfo(types);
         PokemonDType[] dualTypes = dualTypes(types);
-        printDualInfo(dualTypes);
+        Scanner in = new Scanner(System.in);
+        int choice = 0;
+        String options = ("\n0. nothing lol\n1. Single type weaknesses/resistances\n2. Dual type weaknesses/resistances\n3. Adjacency matrix for Weaknesses\n4. Adjacency matrix for resistances\n5. Leave :(");
+        System.out.println("Hello! What would you like to do today? (type a number!!)" + options);
+        while (choice != 5) {
+            if ((choice < 0) && (choice > 5))System.out.println("Pick a number 1-5 plzz" + options);
+            else if (choice > 0) System.out.println("Anything else you'd like to do?" + options);
+            choice = in.nextInt();
+            if (choice == 1) printInfo(types);
+            else if (choice == 2) printDualInfo(dualTypes);
+            else if (choice == 3) printMatrix(weakMatrix(types));
+            else if (choice == 4) printMatrix(resistMatrix(types));
+        }
+
+        System.out.println("Bye! Have a nice day :D");
+        //matrix(typesString);
+
+
 
 /*
         System.out.println("The Adjacency Matrix for Weaknesses");
